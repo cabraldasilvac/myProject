@@ -1,0 +1,7 @@
+{
+  "name": "dicasParaDevs",
+  "version": "1.0.0",
+  "description": "Curso de Node.js",
+  "main": "index.js",
+  "license": "MIT"
+}
