@@ -1,7 +1,18 @@
 {
-  "name": "dicasParaDevs",
+  "name": "dicas-para-devs",
   "version": "1.0.0",
   "description": "Curso de Node.js",
   "main": "index.js",
-  "license": "MIT"
+  "scripts": {
+    "start:dev": "nodemon index.js",
+    "test": "echo \"Error: no test  specified\" && exit 1"
+  },
+  "author": " ",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
