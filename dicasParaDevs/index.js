@@ -1,4 +1,7 @@
 const { Person } = require("./person");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 //require ("./modules/path.js");
 // require ("./modules/fs.js");
