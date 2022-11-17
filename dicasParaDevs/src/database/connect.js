@@ -10,6 +10,8 @@ const connectToDatabase = async () => {
           error
         );
       }
+
+      return console.log("Conexão ao banco de dados realizada com sucesso!");
     }
   );
   // const db = mongoose.connect();
