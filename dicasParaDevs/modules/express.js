@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 
 app.get("/views/users", async (req, res) => {
   const users = await UserModel.find({});
-  res.render("index");
+  res.render("index", { users: users });
 });
 
 // app.get("/home", (req, res) => {
