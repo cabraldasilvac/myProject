@@ -1,7 +1,5 @@
 #DicasParaDevs
 
-
-
 ## Projeto para treinamento.
 
 
