@@ -1,6 +1,0 @@
-#DicasParaDevs
-
-
-## Projeto para treinamento.
-
-
