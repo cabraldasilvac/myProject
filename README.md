@@ -3,6 +3,9 @@
 :rocket: Um projeto com vários exercícios. Estudando JavaScript
 
 
-### DicasParaDevs
+### :white_check_mark: DicasParaDevs
 
-#### Projeto para treinamento.
+
+
+
+#### :star: Projeto para treinamento.
