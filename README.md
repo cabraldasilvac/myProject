@@ -1,7 +1,8 @@
 # myProject
-Estudando JavaScript
+
+:rocket: Um projeto com vários exercícios. Estudando JavaScript
 
 
-## DicasParaDevs
+### DicasParaDevs
 
-Projeto para treinamento.
+#### Projeto para treinamento.
