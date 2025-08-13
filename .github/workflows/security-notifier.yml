@@ -1,0 +1,35 @@
+name: Notificador de Alertas de Segurança
+
+on:
+  # 1. Um alerta do Dependabot for criado, reaberto ou resolvido.
+  dependabot_alert:
+    types: [created, reopened, resolved]
+
+  # 2. Um novo alerta de varredura de código (CodeQL) for encontrado.
+  code_scanning_alert:
+    types: [created, reopened, fixed]
+
+  # 3. Um alerta de segurança sobre uma dependência for publicado.
+  security_advisory:
+    types: [published]
+
+jobs:
+  slack-notification-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar Notificação de Segurança para o Slack
+        uses: cabraldasilvac/security-alert-notifier-action@main
+        with:
+          slack-channel-id: "C099V8S4GDD"
+          
+          slack-message: |
+            🚨 *Alerta de Segurança Detectado no Repositório: ${{ github.repository }}*
+
+            *Tipo de Alerta:* `${{ github.event_name }}`
+            *Severidade:* `${{ github.event.alert.severity || github.event.security_advisory.severity }}`
+            *Resumo:* `${{ github.event.alert.summary || github.event.security_advisory.summary }}`
+            
+            *Link para o Alerta:* ${{ github.event.alert.html_url || github.event.security_advisory.html_url }}
+        env:
+          # O segredo do seu token do Slack
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
