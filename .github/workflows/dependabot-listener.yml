@@ -1,0 +1,12 @@
+name: Teste Puro do Gatilho Dependabot
+
+on:
+  dependabot_alert:
+    types: [created]
+
+jobs:
+  validacao:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Se este passo rodar, o gatilho é valido
+        run: echo "O gatilho dependabot_alert foi aceito com sucesso."
