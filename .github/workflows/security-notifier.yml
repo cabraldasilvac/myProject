@@ -1,66 +1,11 @@
-name: Notificador de Alertas de Segurança
+name: Teste de Sanidade do Workflow
 
 on:
-  dependabot_alert:
-    types: [created, reopened]
-  code_scanning_alert:
-    types: [created, reopened]
-  security_advisory:
-    types: [published]
   workflow_dispatch:
 
 jobs:
-  enviar-notificacao-slack:
+  teste:
     runs-on: ubuntu-latest
     steps:
-      - name: Enviar Notificação sobre Alerta do Dependabot
-        if: github.event_name == 'dependabot_alert'
-        uses: cabraldasilvac/security-alert-notifier-action@main
-        with:
-          slack-channel-id: "C099V8S4GDD"
-          slack-message: |
-            🚨 *Novo Alerta de Segurança (Dependabot)*
-            *Repositório:* ${{ github.repository }}
-            *Dependência:* `${{ github.event.alert.dependency.package.name }}`
-            *Severidade:* `${{ github.event.alert.severity }}`
-            *Link:* ${{ github.event.alert.html_url }}
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-      - name: Enviar Notificação sobre Alerta de Varredura de Código (CodeQL)
-        if: github.event_name == 'code_scanning_alert'
-        uses: cabraldasilvac/security-alert-notifier-action@main
-        with:
-          slack-channel-id: "C099V8S4GDD"
-          slack-message: |
-            🔬 *Novo Alerta de Segurança (Code Scanning)*
-            *Repositório:* ${{ github.repository }}
-            *Ferramenta:* `${{ github.event.alert.tool.name }}`
-            *Regra:* `${{ github.event.alert.rule.id }}`
-            *Severidade:* `${{ github.event.alert.rule.severity }}`
-            *Link:* ${{ github.event.alert.html_url }}
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-      - name: Enviar Notificação sobre Aviso de Segurança (Security Advisory)
-        if: github.event_name == 'security_advisory'
-        uses: cabraldasilvac/security-alert-notifier-action@main
-        with:
-          slack-channel-id: "C099V8S4GDD"
-          slack-message: |
-            📢 *Novo Aviso de Segurança Global (Security Advisory)*
-            *Repositório:* ${{ github.repository }}
-            *Sumário:* `${{ github.event.security_advisory.summary }}`
-            *Severidade:* `${{ github.event.security_advisory.severity }}`
-            *Link:* ${{ github.event.security_advisory.html_url }}
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-      - name: Enviar Notificação sobre Teste Manual
-        if: github.event_name == 'workflow_dispatch'
-        uses: cabraldasilvac/security-alert-notifier-action@main
-        with:
-          slack-channel-id: "C099V8S4GDD"
-          slack-message: "✅ Teste manual do notificador de segurança para o repositório ${{ github.repository }}."
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Dizer Ola
+        run: echo "O workflow de teste de sanidade funcionou!"
