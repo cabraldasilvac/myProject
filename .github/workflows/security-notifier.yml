@@ -1,11 +1,17 @@
-name: Teste de Sanidade do Workflow
+name: Notificador de Alertas de Segurança
 
 on:
   workflow_dispatch:
 
 jobs:
-  teste:
+  enviar-notificacao-slack:
     runs-on: ubuntu-latest
     steps:
-      - name: Dizer Ola
-        run: echo "O workflow de teste de sanidade funcionou!"
+      - name: Notificar sobre Teste Manual
+        if: github.event_name == 'workflow_dispatch'
+        uses: cabraldasilvac/security-alert-notifier-action@main
+        with:
+          slack-channel-id: "C099V8S4GDD"
+          slack-message: "✅ Teste manual do notificador de segurança para o repositório ${{ github.repository }}."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
