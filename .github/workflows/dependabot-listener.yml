@@ -1,30 +1,28 @@
 name: Verificação Diária de Alertas de Segurança
 
 on:
-  # Roda todos os dias às 10:00 UTC
   schedule:
     - cron: '0 10 * * *'
-  # Permite acionar manualmente para testes
   workflow_dispatch:
 
 jobs:
   check-for-alerts:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: read
+
     steps:
       - name: Verificar Alertas do Dependabot via API
-        # Este passo usa a CLI do GitHub (que já vem instalada) para
-        # chamar a API e listar os alertas de dependência.
-        # O comando 'jq' filtra a resposta para criar um JSON limpo.
         id: get_alerts
         run: |
           alerts=$(gh api "repos/${{ github.repository }}/dependabot/alerts" --jq '.[] | {number, state, severity: .security_vulnerability.severity, package: .dependency.package.name, url: .html_url}')
           echo "ALERTS_JSON=$(echo $alerts | jq -c .)" >> $GITHUB_OUTPUT
         env:
-          # O token padrão tem permissão para ler os alertas.
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enviar Notificação para o Slack se houver alertas
-        # Só executa se a lista de alertas não estiver vazia.
         if: steps.get_alerts.outputs.ALERTS_JSON != ''
         uses: cabraldasilvac/security-alert-notifier-action@main
         with:
