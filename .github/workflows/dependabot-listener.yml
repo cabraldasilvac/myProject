@@ -20,7 +20,7 @@ jobs:
           alerts=$(gh api "repos/${{ github.repository }}/dependabot/alerts" --jq '.[] | {number, state, severity: .security_vulnerability.severity, package: .dependency.package.name, url: .html_url}')
           echo "ALERTS_JSON=$(echo $alerts | jq -c .)" >> $GITHUB_OUTPUT
         env:
-          GGH_TOKEN: ${{ secrets.ACTION_PAT }}
+          GH_TOKEN: ${{ secrets.ACTION_PAT }}
 
       - name: Enviar Notificação para o Slack se houver alertas
         if: steps.get_alerts.outputs.ALERTS_JSON != ''
