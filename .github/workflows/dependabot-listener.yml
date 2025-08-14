@@ -17,8 +17,8 @@ jobs:
       - name: Verificar Alertas do Dependabot via API
         id: get_alerts
         run: |
-          alerts=$(gh api "repos/${{ github.repository }}/dependabot/alerts" --jq '.[] | {number, state, severity: .security_vulnerability.severity, package: .dependency.package.name, url: .html_url}')
-          echo "ALERTS_JSON=$(echo $alerts | jq -c .)" >> $GITHUB_OUTPUT
+          alerts=$(gh api "repos/${{ github.repository }}/dependabot/alerts" --jq '[.[] | {number, state, severity: .security_vulnerability.severity, package: .dependency.package.name, url: .html_url}'])
+          echo "ALERTS_JSON=$alerts_json" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.ACTION_PAT }}
 
