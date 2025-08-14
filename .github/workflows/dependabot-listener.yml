@@ -1,12 +1,44 @@
-name: Teste Puro do Gatilho Dependabot
+name: Verificação Diária de Alertas de Segurança
 
 on:
-  dependabot_alert:
-    types: [created]
+  # Roda todos os dias às 10:00 UTC
+  schedule:
+    - cron: '0 10 * * *'
+  # Permite acionar manualmente para testes
+  workflow_dispatch:
 
 jobs:
-  validacao:
+  check-for-alerts:
     runs-on: ubuntu-latest
     steps:
-      - name: Se este passo rodar, o gatilho é valido
-        run: echo "O gatilho dependabot_alert foi aceito com sucesso."
+      - name: Verificar Alertas do Dependabot via API
+        # Este passo usa a CLI do GitHub (que já vem instalada) para
+        # chamar a API e listar os alertas de dependência.
+        # O comando 'jq' filtra a resposta para criar um JSON limpo.
+        id: get_alerts
+        run: |
+          alerts=$(gh api "repos/${{ github.repository }}/dependabot/alerts" --jq '.[] | {number, state, severity: .security_vulnerability.severity, package: .dependency.package.name, url: .html_url}')
+          echo "ALERTS_JSON=$(echo $alerts | jq -c .)" >> $GITHUB_OUTPUT
+        env:
+          # O token padrão tem permissão para ler os alertas.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enviar Notificação para o Slack se houver alertas
+        # Só executa se a lista de alertas não estiver vazia.
+        if: steps.get_alerts.outputs.ALERTS_JSON != ''
+        uses: cabraldasilvac/security-alert-notifier-action@main
+        with:
+          slack-channel-id: "C099V8S4GDD"
+          slack-message: |
+            📢 *Resumo Diário de Alertas de Segurança Abertos*
+            *Repositório:* ${{ github.repository }}
+            *Alertas Encontrados:*
+            ```
+            ${{ steps.get_alerts.outputs.ALERTS_JSON }}
+            ```
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Confirmar que não há alertas
+        if: steps.get_alerts.outputs.ALERTS_JSON == ''
+        run: echo "Nenhum alerta do Dependabot encontrado. Tudo certo!"
