@@ -1,32 +1,19 @@
 name: Notificador de Alertas de Segurança
 
-# ===================================================================
-# SEÇÃO 'ON' CORRIGIDA
-# Todos os gatilhos estão no mesmo nível de indentação.
-# ===================================================================
 on:
   dependabot_alert:
     types: [created, reopened]
-
   code_scanning_alert:
     types: [created, reopened]
-
-  # Adicionei este gatilho para você, caso queira monitorar avisos de segurança.
-  # O tipo 'published' ocorre quando um novo aviso é publicado.
   security_advisory:
     types: [published]
-
   workflow_dispatch:
 
 jobs:
   enviar-notificacao-slack:
     runs-on: ubuntu-latest
     steps:
-      # ===================================================================
-      # PASSO PARA CADA TIPO DE ALERTA
-      # Usamos condições 'if' para enviar a mensagem certa para cada caso.
-      # ===================================================================
-      - name: Notificar sobre Alerta do Dependabot
+      - name: Enviar Notificação sobre Alerta do Dependabot
         if: github.event_name == 'dependabot_alert'
         uses: cabraldasilvac/security-alert-notifier-action@main
         with:
@@ -40,7 +27,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-      - name: Notificar sobre Alerta de Varredura de Código (CodeQL)
+      - name: Enviar Notificação sobre Alerta de Varredura de Código (CodeQL)
         if: github.event_name == 'code_scanning_alert'
         uses: cabraldasilvac/security-alert-notifier-action@main
         with:
@@ -55,7 +42,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-      - name: Notificar sobre Aviso de Segurança (Security Advisory)
+      - name: Enviar Notificação sobre Aviso de Segurança (Security Advisory)
         if: github.event_name == 'security_advisory'
         uses: cabraldasilvac/security-alert-notifier-action@main
         with:
@@ -69,7 +56,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-      - name: Notificar sobre Teste Manual
+      - name: Enviar Notificação sobre Teste Manual
         if: github.event_name == 'workflow_dispatch'
         uses: cabraldasilvac/security-alert-notifier-action@main
         with:
