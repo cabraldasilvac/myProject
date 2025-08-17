@@ -2,7 +2,7 @@ name: Verificação Diária de Alertas de Segurança
 
 on:
   schedule:
-    - cron: '0 10 * * *'
+    - cron: '45 18 * * *'  # 15:45
   workflow_dispatch:
 
 jobs:
