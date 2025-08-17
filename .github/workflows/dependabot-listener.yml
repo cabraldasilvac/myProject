@@ -2,7 +2,7 @@ name: Verificação Diária de Alertas de Segurança
 
 on:
   schedule:
-    - cron: '30 20 * * *'  # 17:30
+    - cron: '30 21 * * *'  # 15:45
   workflow_dispatch:
 
 jobs:
@@ -22,6 +22,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.ACTION_PAT }}
 
+      - name: Formatar Alertas para o Slack
+        id: format_alerts
+        if: steps.get_alerts.outputs.ALERTS_JSON != '[]'
+        run: |
+          FORMATTED_ALERTS=$(echo "${{ steps.get_alerts.outputs.ALERTS_JSON }}" | jq -r '
+            .[] | "• Número: #\(.number) - Pacote: `\(.package)` - Severidade: *\(.severity)* - Estado: `\(.state)`\nURL: <\(.url)|\(.url)>"' | sed 's/\\n/\n/g')
+          echo "FORMATTED_ALERTS=$FORMATTED_ALERTS" >> $GITHUB_OUTPUT
+
       - name: Enviar Notificação para o Slack se houver alertas
         if: steps.get_alerts.outputs.ALERTS_JSON != '[]' && steps.get_alerts.outputs.ALERTS_JSON != ''
         uses: cabraldasilvac/security-alert-notifier-action@main
@@ -32,7 +40,7 @@ jobs:
             *Repositório:* ${{ github.repository }}
             *Alertas Encontrados:*
             ```
-            ${{ steps.get_alerts.outputs.ALERTS_JSON }}
+            ${{ steps.format_alerts.outputs.FORMATTED_ALERTS }}
             ```
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
