@@ -2,12 +2,13 @@ name: Verificação Diária de Alertas de Segurança
 
 on:
   schedule:
-    - cron: '00 14 * * *'  # 15:45
+    - cron: '0 12 * * 1-5'
   workflow_dispatch:
 
 jobs:
   check-for-alerts:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
 
     permissions:
       contents: read
