@@ -2,7 +2,7 @@ name: Verificação Diária de Alertas de Segurança
 
 on:
   schedule:
-    - cron: '35 22 * * *'  # 15:45
+    - cron: '05 13 * * *'  # 15:45
   workflow_dispatch:
 
 jobs:
@@ -18,6 +18,8 @@ jobs:
         id: get_alerts
         run: |
           alerts=$(gh api "repos/${{ github.repository }}/dependabot/alerts" --jq '[.[] | {number, state, severity: .security_vulnerability.severity, package: .dependency.package.name, url: .html_url}]')
+          # Remove newlines and trim whitespace from the JSON string
+          alerts=$(echo "$alerts" | tr -d '\n' | tr -s '[:space:]' ' ')
           echo "ALERTS_JSON=$alerts" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.ACTION_PAT }}
@@ -26,12 +28,14 @@ jobs:
         id: format_alerts
         if: steps.get_alerts.outputs.ALERTS_JSON != '[]' && steps.get_alerts.outputs.ALERTS_JSON != ''
         run: |
-          FORMATTED_ALERTS=$(echo "${{ steps.get_alerts.outputs.ALERTS_JSON }}" | jq -r '
-            .[] | "- *Pacote:* `\(.package)`\n  - *Severidade:* *\(.severity)*\n  - *Estado:* `\(.state)`\n  - *URL:* <\(.url)|\(.url)>"'
+          FORMATTED_ALERTS=$(jq -r '
+            .[] | "- *Pacote:* `\(.package)`\n  - *Severidade:* *\(.severity)*\n  - *Estado:* `\(.state)`\n  - *URL:* <\(.url)|\(.url)>"' <<EOF
+            ${{ steps.get_alerts.outputs.ALERTS_JSON }}
+            EOF
           )
           echo "FORMATTED_ALERTS=$FORMATTED_ALERTS" >> $GITHUB_OUTPUT
 
-      - name: Enviar Notificação para o Slack se houver alertas
+      - name: Enviar Notificação para o Slack
         if: steps.get_alerts.outputs.ALERTS_JSON != '[]' && steps.get_alerts.outputs.ALERTS_JSON != ''
         uses: cabraldasilvac/security-alert-notifier-action@main
         with:
