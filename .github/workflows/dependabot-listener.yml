@@ -2,7 +2,7 @@ name: Verificação Diária de Alertas de Segurança
 
 on:
   schedule:
-    - cron: '45 18 * * *'  # 15:45
+    - cron: '00 14 * * *'  # 15:45
   workflow_dispatch:
 
 jobs:
@@ -31,8 +31,10 @@ jobs:
           ${{ steps.get_alerts.outputs.ALERTS_JSON }}
           EOF
           )
-          echo "FORMATTED_ALERTS=$FORMATTED_ALERTS" >> $GITHUB_OUTPUT
-
+          echo "FORMATTED_ALERTS<<EOF" >> $GITHUB_OUTPUT
+          echo "$FORMATTED_ALERTS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
       - name: Enviar Notificação para o Slack
         if: steps.get_alerts.outputs.ALERTS_JSON != '[]' && steps.get_alerts.outputs.ALERTS_JSON != ''
         uses: cabraldasilvac/security-alert-notifier-action@main
